@@ -409,9 +409,6 @@ team2,
   FROM game JOIN goal ON matchid = id GROUP BY mdate,matchid,team1,team2
 ORDER BY mdate,matchid,team1,team2
 
-
-#join quiz
-
  game  JOIN goal ON (id=matchid)
 
 matchid, teamid, player, gtime, id, teamname, coach
@@ -441,3 +438,204 @@ Netherlands	2
 Poland	2
 Republic of Ireland	1
 Ukraine	2
+
+SELECT id, title
+ FROM movie
+ WHERE yr=1962
+
+SELECT yr
+FROM movie
+WHERE title ='Citizen Kane'
+
+SELECT id,title,yr
+FROM movie
+WHERE title LIKE 'star trek%' ORDER BY yr
+
+SELECT actor.id FROM movie
+JOIN actor ON (movie.id = actor.id)
+WHERE name = 'Glenn Close'
+
+SELECT id
+FROM movie
+WHERE title = 'Casablanca'
+
+SELECT name FROM casting
+JOIN actor ON casting.actorid = actor.id
+WHERE movieid = (SELECT id
+FROM movie
+WHERE title = 'Casablanca') and casting.actorid =actor.id
+
+SELECT name FROM casting
+JOIN actor ON casting.actorid = actor.id
+WHERE movieid = (SELECT id
+FROM movie
+WHERE title = 'Alien') and casting.actorid =actor.id
+
+/* SELECT title from movie WHERE id IN
+(SELECT movieid FROM casting
+WHERE actorid = (SELECT id FROM actor WHERE name = 'Harrison Ford' )) or */ 
+SELECT DISTINCT title FROM movie
+JOIN casting ON movieid = movie.id
+JOIN actor ON casting.actorid = actor.id
+WHERE actor.name = 'Harrison Ford'
+
+SELECT DISTINCT title FROM movie
+JOIN casting ON movieid = movie.id
+JOIN actor ON casting.actorid = actor.id
+WHERE actor.name = 'Harrison Ford'
+AND ord <> 1
+
+SELECT DISTINCT title,name FROM movie
+JOIN casting ON movieid = movie.id
+JOIN actor ON casting.actorid = actor.id
+WHERE yr = 1962
+AND ord = 1
+
+SELECT yr,COUNT(title) FROM
+  movie JOIN casting ON movie.id=movieid
+        JOIN actor   ON actorid=actor.id
+WHERE name='Doris Day'
+GROUP BY yr
+HAVING COUNT(title) > 1
+
+/* SELECT DISTINCT title,name FROM movie
+JOIN casting ON movieid = movie.id
+JOIN actor ON casting.actorid = actor.id
+WHERE ord = 1 AND movieid IN (SELECT movieid FROM casting WHERE actorid=(SELECT id from actor WHERE name ='JUlie Andrews')) */
+
+/* or */
+SELECT DISTINCT title,name FROM movie
+JOIN casting ON movieid = movie.id
+JOIN actor ON casting.actorid = actor.id
+WHERE ord = 1 AND movieid IN (SELECT movieid FROM casting JOIN actor ON actorid=id WHERE name = 'Julie Andrews')
+
+SELECT DISTINCT name
+FROM actor
+JOIN casting on actorid =actor.id
+GROUP BY name,ord
+HAVING COUNT(name) >= 15 AND ord = 1
+
+SELECT title, COUNT(movieid)
+FROM movie
+JOIN casting ON casting.movieid = movie.id
+WHERE yr = 1978
+GROUP BY movieid,title
+ORDER BY COUNT(movieid) DESC ,title
+
+SELECT name From actor
+WHERE id IN (
+SELECT actorid FROM casting
+WHERE movieid IN(
+SELECT movieid FROM casting
+JOIN actor ON actor.id = casting.actorid
+WHERE name = 'Art Garfunkel')) AND name <> 'Art Garfunkel' ORDER BY name
+
+SELECT name
+  FROM actor INNER JOIN movie ON actor.id = director
+ WHERE gross < budget
+
+SELECT *
+  FROM actor JOIN casting ON actor.id = actorid
+  JOIN movie ON movie.id = movieid
+
+SELECT name, COUNT(movieid)
+  FROM casting JOIN actor ON actorid=actor.id
+ WHERE name LIKE 'John %'
+ GROUP BY name ORDER BY 2 DESC
+
+
+Table-B
+"Crocodile" Dundee
+Crocodile Dundee in Los Angeles
+Flipper
+Lightning Jack
+
+
+SELECT name
+  FROM movie JOIN casting ON movie.id = movieid
+  JOIN actor ON actor.id = actorid
+WHERE ord = 1 AND director = 351
+
+link the director column in movies with the primary key in actor
+connect the primary keys of movie and actor via the casting table
+
+
+Table-B
+A Bronx Tale	1993
+Bang the Drum Slowly	1973
+Limitless	2011
+
+SELECT name
+FROM teacher
+WHERE dept IS NULL
+
+SELECT teacher.name, dept.name
+ FROM teacher INNER JOIN dept
+           ON (teacher.dept=dept.id)
+
+SELECT teacher.name, dept.name
+ FROM teacher LEFT JOIN dept
+           ON (teacher.dept=dept.id)
+
+SELECT teacher.name, dept.name
+ FROM teacher RIGHT JOIN dept
+           ON (teacher.dept=dept.id)
+
+
+SELECT name, 
+CASE 
+  WHEN mobile IS NULL THEN '07986 444 2266' 
+  ELSE mobile 
+  END
+FROM teacher
+
+SELECT name, COALESCE(mobile,'07986 444 2266')
+FROM teacher
+
+SELECT teacher.name, COALESCE(dept.name,'None')
+ FROM teacher LEFT JOIN dept
+           ON (teacher.dept=dept.id)
+
+SELECT COUNT(name),COUNT(mobile)
+FROM teacher
+
+SELECT dept.name ,COUNT(dept)
+From teacher RIGHT JOIN dept ON dept.id = teacher.dept
+GROUP BY dept.name
+
+SELECT name,
+CASE dept
+WHEN 1 THEN 'Sci'
+WHEN 2 THEN 'Sci'
+ELSE 'Art'
+END
+FROM teacher
+
+SELECT name,
+CASE dept
+WHEN 1 THEN 'Sci'
+WHEN 2 THEN 'Sci'
+WHEN 3 THEN 'Art'
+ELSE 'None'
+END
+FROM teacher
+
+SELECT teacher.name, dept.name FROM teacher LEFT OUTER JOIN dept ON (teacher.dept = dept.id)
+
+SELECT dept.name FROM teacher JOIN dept ON (dept.id = teacher.dept) WHERE teacher.name = 'Cutflower'
+ 
+SELECT dept.name, COUNT(teacher.name) FROM teacher RIGHT JOIN dept ON dept.id = teacher.dept GROUP BY dept.name
+
+display 0 in result column for all teachers without department
+
+'four' for Throd
+
+
+Table-A
+Shrivell	Computing
+Throd	Computing
+Splint	Computing
+Spiregrain	Other
+Cutflower	Other
+Deadyawn	Other
+
